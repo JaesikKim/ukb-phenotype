@@ -114,3 +114,13 @@ NL trait
  → render_audit.py → audit_report.html
 ```
 Provenance chain tied by `kg_version`: `concept.json` → `discovery.jsonl` → `rules.json`.
+
+## License & citation
+MIT — see [LICENSE](LICENSE). This toolkit is an agent-native distillation of the UKB Agent framework;
+if it helps your work, please cite:
+
+> Jeong C-U, Kim J, Joo J, Lee B, Kim Y-G, Kim D. *An Agentic System for Automated Data Curation and
+> Analysis in Large-Scale Biobanks.* Machine Learning for Health (ML4H), 2025.
+
+UK Biobank data is accessed under your own application; this repository ships only public Showcase
+metadata tooling — never participant data.
