@@ -243,11 +243,14 @@ def rules_html(r):
         flds = v.get("fields", [])
         combine = v.get("combine", "first_non_null")
         sc = v.get("score")
-        terms = ", ".join(f["variable"] if "variable" in f
-                          else f'{f.get("field_id")}[{f.get("instance_agg", "mean")}]' for f in flds)
-        formula = f"{combine}( {terms} )"
-        if sc:
-            formula += f"  →  {_score_str(sc)}"
+        if v.get("expression"):
+            formula = "expr:  " + v["expression"]
+        else:
+            terms = ", ".join(f["variable"] if "variable" in f
+                              else f'{f.get("field_id")}[{f.get("instance_agg", "mean")}]' for f in flds)
+            formula = f"{combine}( {terms} )"
+            if sc:
+                formula += f"  →  {_score_str(sc)}"
         frows = ""
         for f in flds:
             if "variable" in f:
@@ -257,7 +260,10 @@ def rules_html(r):
                 continue
             mc = f.get("missing_codes") or []
             rec = f.get("recode") or {}
-            frows += (f'<tr><td class=mono>{esc(f.get("field_id"))}</td>'
+            fid_cell = esc(f.get("field_id"))
+            if f.get("as"):
+                fid_cell += f' <span class=muted>as {esc(f["as"])}</span>'
+            frows += (f'<tr><td class=mono>{fid_cell}</td>'
                       f'<td>{esc(f.get("title", ""))}</td>'
                       f'<td>{esc(f.get("role", ""))}</td>'
                       f'<td class=mono>{esc(", ".join(map(str, mc)) if mc else "—")}</td>'

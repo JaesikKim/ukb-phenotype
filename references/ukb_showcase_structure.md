@@ -159,7 +159,8 @@ buried ones. The branch also contains unrelated siblings (beef, beer) — **sele
 2. `coding`: apply `special_kind` — `missing` → `missing_codes` (NaN); `bounded`/levels → `recode`.
 3. Unit / frequency harmonization (weekly↔monthly↔daily, grams↔servings) — record the assumption.
 4. Choose `instance_agg` (per field) and `combine` (across fields): `mean|max|min|sum|first_non_null` /
-   `sum|max|min|mean|priority|first_non_null`.
+   `sum|max|min|mean|priority|first_non_null`. For derived/conditional logic use a sandboxed
+   `expression` (e.g. `weight/(height/100)**2`); `{"variable": name}` reuses an earlier output variable.
 5. Optional `score`: threshold/membership → label.
 6. **Fail loud**: a referenced field absent from the extract raises (encode.py default) — no silent NaN.
 7. Artifacts: structured `rules.json` (plan, reviewed with the user) → `gen_encoder.py` → `encode.py`.

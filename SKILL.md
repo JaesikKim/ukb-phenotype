@@ -122,6 +122,14 @@ Variable knobs: `combine` ∈ `sum|max|min|mean|priority|first_non_null` (merge 
 For composite scores (e.g. a GAD-7 total = sum of item scores), a field entry may be
 `{"variable": "<earlier-variable-name>"}` instead of a `field_id` — it reuses an already-computed
 output variable. See `examples/gad-7/` (7 items → `gad7_total` → `gad7_moderate_or_worse`).
+
+For **derived / conditional logic** (BMI, ratios, arithmetic thresholds), a variable can use
+`"expression": "<expr>"` instead of `combine` — a **sandboxed** arithmetic/conditional over its
+fields (bind each with `"as": "<alias>"`). Allowed: `+ - * / ** %`, comparisons, `& | ~`, and the
+functions `where/abs/log/sqrt/exp/minimum/maximum/clip` — nothing else (no arbitrary code). e.g.
+`{"name":"bmi","fields":[{"field_id":21002,"as":"weight"},{"field_id":50,"as":"height"}],"expression":"weight/(height/100)**2"}`
+then `{"name":"obese","fields":[{"variable":"bmi","as":"bmi"}],"expression":"where(bmi>=30,1,0)"}`.
+
 `dropped` is optional — only judgment-call rejections need a reason; the render derives the rest.
 
 ## 6. Compile + run

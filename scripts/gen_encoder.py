@@ -23,6 +23,28 @@ VALID_AGG = {"mean", "max", "min", "sum", "first_non_null"}
 VALID_COMBINE = {"sum", "max", "min", "mean", "priority", "first_non_null"}
 VALID_OPS = {">=", "<=", ">", "<", "==", "in"}
 
+_ALLOWED_EXPR = (ast.Expression, ast.Constant, ast.Name, ast.Load, ast.BinOp, ast.UnaryOp,
+                 ast.BoolOp, ast.Compare, ast.Call, ast.Add, ast.Sub, ast.Mult, ast.Div,
+                 ast.Pow, ast.Mod, ast.BitAnd, ast.BitOr, ast.BitXor, ast.USub, ast.UAdd,
+                 ast.Invert, ast.And, ast.Or, ast.Lt, ast.LtE, ast.Gt, ast.GtE, ast.Eq, ast.NotEq)
+_SAFE_FUNCS = {"where", "abs", "log", "sqrt", "exp", "minimum", "maximum", "clip"}
+
+
+def _validate_expr(expr, aliases, vname):
+    """Static safety check at compile time: only safe nodes, whitelisted funcs, declared names."""
+    try:
+        tree = ast.parse(expr, mode="eval")
+    except SyntaxError as e:
+        sys.exit(f"FAIL: {vname} expression syntax error: {e}")
+    for node in ast.walk(tree):
+        if not isinstance(node, _ALLOWED_EXPR):
+            sys.exit(f"FAIL: {vname} expression uses disallowed {type(node).__name__}")
+        if isinstance(node, ast.Call) and (not isinstance(node.func, ast.Name) or node.func.id not in _SAFE_FUNCS):
+            sys.exit(f"FAIL: {vname} expression calls a non-whitelisted function")
+        if isinstance(node, ast.Name) and node.id not in aliases and node.id not in _SAFE_FUNCS:
+            sys.exit(f"FAIL: {vname} expression references unknown name {node.id!r} "
+                     f"(declare it via a field 'as' alias)")
+
 HELPERS = r'''
 import argparse
 import json
@@ -83,33 +105,98 @@ def _score(v, sc):
     return out
 
 
+def _alias(f):
+    return f.get("as") or f.get("variable") or f"f{f.get('field_id')}"
+
+
+def _field_series(df, f, vname, strict, computed):
+    if "variable" in f:  # reference an already-computed output variable
+        ref = f["variable"]
+        if ref not in computed:
+            sys.exit(f"FAIL: {vname} references variable {ref!r} before it is computed "
+                     f"(define it earlier in 'variables')")
+        return computed[ref]
+    fid = f["field_id"]
+    cols = _cols(df, fid)
+    if not cols:
+        msg = f"field {fid} ({vname}) not in extract — no columns match {fid}-<instance>.<array>"
+        if strict:
+            sys.exit(f"FAIL: {msg}")
+        sys.stderr.write(f"WARN: {msg}; emitting NaN\n")
+        return pd.Series(np.nan, index=df.index)
+    sub = df[cols].apply(pd.to_numeric, errors="coerce")
+    mc = f.get("missing_codes") or []
+    if mc:
+        sub = sub.mask(sub.isin(mc))
+    rec = f.get("recode") or {}
+    if rec:
+        sub = sub.replace({float(k): v for k, v in rec.items()})
+    return _agg(sub, f.get("instance_agg", "mean"))
+
+
+def _safe_eval(expr, env, vname):
+    """Evaluate a restricted arithmetic/conditional expression over pandas Series — NOT eval().
+    Only field aliases, numeric literals, + - * / ** %, & | ~, comparisons, and the whitelisted
+    funcs (where/abs/log/sqrt/exp/minimum/maximum/clip) are allowed; anything else fails loud."""
+    import ast as A
+    import operator as op
+    BIN = {A.Add: op.add, A.Sub: op.sub, A.Mult: op.mul, A.Div: op.truediv, A.Pow: op.pow,
+           A.Mod: op.mod, A.BitAnd: op.and_, A.BitOr: op.or_, A.BitXor: op.xor}
+    CMP = {A.Lt: op.lt, A.LtE: op.le, A.Gt: op.gt, A.GtE: op.ge, A.Eq: op.eq, A.NotEq: op.ne}
+
+    def _wh(c, a, b):
+        idx = None
+        for x in (c, a, b):
+            if hasattr(x, "index"):
+                idx = x.index
+                break
+        return pd.Series(np.where(c, a, b), index=idx)
+
+    funcs = {"where": _wh, "abs": abs, "log": np.log, "sqrt": np.sqrt, "exp": np.exp,
+             "minimum": np.minimum, "maximum": np.maximum, "clip": np.clip}
+
+    def ev(n):
+        if isinstance(n, A.Expression):
+            return ev(n.body)
+        if isinstance(n, A.Constant) and isinstance(n.value, (int, float)):
+            return n.value
+        if isinstance(n, A.Name):
+            if n.id in env:
+                return env[n.id]
+            sys.exit(f"FAIL: expression for {vname!r}: unknown name {n.id!r}")
+        if isinstance(n, A.BinOp) and type(n.op) in BIN:
+            return BIN[type(n.op)](ev(n.left), ev(n.right))
+        if isinstance(n, A.UnaryOp):
+            if isinstance(n.op, A.USub):
+                return -ev(n.operand)
+            if isinstance(n.op, A.UAdd):
+                return ev(n.operand)
+            if isinstance(n.op, A.Invert):
+                return ~ev(n.operand)
+        if isinstance(n, A.BoolOp):
+            vals = [ev(v) for v in n.values]
+            comb = op.and_ if isinstance(n.op, A.And) else op.or_
+            r = vals[0]
+            for x in vals[1:]:
+                r = comb(r, x)
+            return r
+        if isinstance(n, A.Compare) and all(type(o) in CMP for o in n.ops):
+            left = ev(n.left); r = None
+            for o, c in zip(n.ops, n.comparators):
+                rc = ev(c); res = CMP[type(o)](left, rc); r = res if r is None else (r & res); left = rc
+            return r
+        if isinstance(n, A.Call) and isinstance(n.func, A.Name) and n.func.id in funcs:
+            return funcs[n.func.id](*[ev(a) for a in n.args])
+        sys.exit(f"FAIL: expression for {vname!r}: disallowed node {type(n).__name__}")
+
+    return ev(A.parse(expr, mode="eval"))
+
+
 def encode_variable(df, spec, strict, computed):
-    parts = []
-    for f in spec["fields"]:
-        if "variable" in f:  # reference an already-computed output variable (e.g. a sum of item scores)
-            ref = f["variable"]
-            if ref not in computed:
-                sys.exit(f"FAIL: {spec['name']} references variable {ref!r} before it is computed "
-                         f"(define it earlier in 'variables')")
-            parts.append(computed[ref])
-            continue
-        fid = f["field_id"]
-        cols = _cols(df, fid)
-        if not cols:
-            msg = f"field {fid} ({spec['name']}) not in extract — no columns match {fid}-<instance>.<array>"
-            if strict:
-                sys.exit(f"FAIL: {msg}")
-            sys.stderr.write(f"WARN: {msg}; emitting NaN\n")
-            parts.append(pd.Series(np.nan, index=df.index))
-            continue
-        sub = df[cols].apply(pd.to_numeric, errors="coerce")
-        mc = f.get("missing_codes") or []
-        if mc:
-            sub = sub.mask(sub.isin(mc))
-        rec = f.get("recode") or {}
-        if rec:
-            sub = sub.replace({float(k): v for k, v in rec.items()})
-        parts.append(_agg(sub, f.get("instance_agg", "mean")))
+    if spec.get("expression"):  # arithmetic / conditional over the fields (sandboxed)
+        env = {_alias(f): _field_series(df, f, spec["name"], strict, computed) for f in spec["fields"]}
+        return _safe_eval(spec["expression"], env, spec["name"])
+    parts = [_field_series(df, f, spec["name"], strict, computed) for f in spec["fields"]]
     v = _combine(parts, spec.get("combine", "first_non_null"))
     if spec.get("score"):
         v = _score(v, spec["score"])
@@ -156,6 +243,15 @@ def validate(rules):
             ia = f.get("instance_agg", "mean")
             if ia not in VALID_AGG:
                 sys.exit(f"FAIL: {name}.{f['field_id']} bad instance_agg {ia!r} (use {sorted(VALID_AGG)})")
+        if v.get("expression"):  # expression variable: validate the expr; combine/score are ignored
+            aliases = set()
+            for f in v["fields"]:
+                a = f.get("as") or f.get("variable") or (f"f{f['field_id']}" if "field_id" in f else None)
+                if not a:
+                    sys.exit(f"FAIL: {name} expression field needs an 'as' alias or 'field_id'")
+                aliases.add(a)
+            _validate_expr(v["expression"], aliases, name)
+            continue
         cb = v.get("combine", "first_non_null")
         if cb not in VALID_COMBINE:
             sys.exit(f"FAIL: {name} bad combine {cb!r} (use {sorted(VALID_COMBINE)})")
