@@ -29,7 +29,7 @@ and Claude Code auto-discovers it.
 
 ```bash
 # user-level (available in every project):
-git clone https://github.com/<you>/ukb-phenotype ~/.claude/skills/ukb-phenotype
+git clone https://github.com/JaesikKim/ukb-phenotype ~/.claude/skills/ukb-phenotype
 cd ~/.claude/skills/ukb-phenotype
 python3 scripts/build_kg.py        # download UKB schema + build the local KG (~3 s, ~54 MB, gitignored)
 ```
