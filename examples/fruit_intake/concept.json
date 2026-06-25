@@ -1,0 +1,45 @@
+{
+  "query": "fruit intake",
+  "phenotype": "Fruit intake",
+  "tier": "known_composite",
+  "kg_version": "1782339456",
+  "web_searched": false,
+  "sources": [],
+  "items": [
+    {
+      "item": "whole fruit, habitual (touchscreen)",
+      "encoding_logic": "pieces/day",
+      "search_terms": [
+        "fresh fruit intake",
+        "dried fruit intake"
+      ]
+    },
+    {
+      "item": "fruit by 24h-recall food group",
+      "encoding_logic": "grams/day",
+      "search_terms": [
+        "fruit"
+      ]
+    },
+    {
+      "item": "per-fruit 24h-recall items",
+      "encoding_logic": "servings",
+      "search_terms": [
+        "apple",
+        "berry",
+        "citrus"
+      ]
+    },
+    {
+      "item": "fruit juice / smoothie",
+      "encoding_logic": "servings (scope-dependent)",
+      "search_terms": [
+        "fruit juice",
+        "smoothie"
+      ]
+    }
+  ],
+  "scoring": "whole-fruit pieces/day (1309+1319) OR total fruit grams/day (sum 26089-26094); juice 26095 optional separate variable. Touchscreen vs 24h-recall are unit-incompatible — pick one primary.",
+  "confidence": "high",
+  "verify_flags": []
+}

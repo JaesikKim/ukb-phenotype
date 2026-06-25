@@ -1,0 +1,20 @@
+# Built KG artifact + downloaded schema (regenerate with scripts/build_kg.py)
+data/ukb_kg.sqlite
+data/raw/
+*.sqlite
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+# Per-run outputs (the committed examples/ set is curated; ignore ad-hoc ones)
+/discovery.jsonl
+/concept.json
+/rules.json
+/discovery_audit.json
+/phenotype.csv
+/encode.py
+/audit_report.html

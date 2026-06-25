@@ -1,0 +1,109 @@
+{
+  "phenotype": "Fruit intake",
+  "kg_version": "1782339456",
+  "source_concept": "known_composite; whole fruit (touchscreen, pieces/day) vs 24h-recall (grams) — unit-incompatible, given as two variables",
+  "variables": [
+    {
+      "name": "fresh_fruit_pieces_per_day",
+      "description": "Habitual whole fruit (touchscreen), pieces/day",
+      "fields": [
+        {
+          "field_id": 1309,
+          "title": "Fresh fruit intake",
+          "missing_codes": [
+            -1,
+            -3
+          ],
+          "recode": {
+            "-10": 0.5
+          },
+          "instance_agg": "mean",
+          "role": "primary"
+        },
+        {
+          "field_id": 1319,
+          "title": "Dried fruit intake",
+          "missing_codes": [
+            -1,
+            -3
+          ],
+          "recode": {
+            "-10": 0.5
+          },
+          "instance_agg": "mean",
+          "role": "primary"
+        }
+      ],
+      "combine": "sum",
+      "score": null,
+      "rationale": "Fresh + dried pieces/day. -1/-3 -> NaN; -10 'Less than one' -> 0.5; mean across instances 0-3, then sum."
+    },
+    {
+      "name": "fruit_grams_per_day_24h",
+      "description": "Total whole-fruit grams from 24h-recall food groups",
+      "fields": [
+        {
+          "field_id": 26089,
+          "title": "Apples and pears",
+          "instance_agg": "mean",
+          "role": "component"
+        },
+        {
+          "field_id": 26090,
+          "title": "Berries",
+          "instance_agg": "mean",
+          "role": "component"
+        },
+        {
+          "field_id": 26091,
+          "title": "Citrus",
+          "instance_agg": "mean",
+          "role": "component"
+        },
+        {
+          "field_id": 26092,
+          "title": "Dried fruit",
+          "instance_agg": "mean",
+          "role": "component"
+        },
+        {
+          "field_id": 26093,
+          "title": "Other fruit",
+          "instance_agg": "mean",
+          "role": "component"
+        },
+        {
+          "field_id": 26094,
+          "title": "Stewed fruit",
+          "instance_agg": "mean",
+          "role": "component"
+        }
+      ],
+      "combine": "sum",
+      "score": null,
+      "rationale": "Sum of fruit food-group grams; mean across 24h-recall instances; encoding 0 (no special codes); juice 26095 excluded by scope."
+    }
+  ],
+  "dropped": [
+    {
+      "field_id": 104340,
+      "title": "Fresh tomato intake",
+      "reason": "botanical fruit but dietary vegetable"
+    },
+    {
+      "field_id": 26143,
+      "title": "Tomatoes",
+      "reason": "dietary vegetable, not fruit"
+    },
+    {
+      "field_id": 26146,
+      "title": "Other vegetables, including mushrooms, fruiting and mixed vegetables",
+      "reason": "'fruiting' = botanical, not dietary fruit"
+    },
+    {
+      "field_id": 26095,
+      "title": "Fruit juice",
+      "reason": "scope: 100% juice analyzed separately from whole fruit"
+    }
+  ]
+}

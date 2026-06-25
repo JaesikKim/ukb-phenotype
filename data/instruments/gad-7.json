@@ -1,0 +1,26 @@
+{
+  "slug": "gad-7",
+  "phenotype": "GAD-7 (Generalized Anxiety Disorder 7-item scale)",
+  "tier": "validated_instrument",
+  "sources": [
+    {
+      "title": "Spitzer RL, Kroenke K, Williams JBW, Löwe B. A brief measure for assessing generalized anxiety disorder: the GAD-7. Arch Intern Med. 2006;166(10):1092-1097.",
+      "url": "https://doi.org/10.1001/archinte.166.10.1092",
+      "note": "[VERIFY] canonical source; re-confirm items and cutoffs via web before relying on them"
+    }
+  ],
+  "timeframe": "last 2 weeks",
+  "response_scale": {"0": "Not at all", "1": "Several days", "2": "More than half the days", "3": "Nearly every day"},
+  "items": [
+    {"n": 1, "item": "Feeling nervous, anxious, or on edge", "search_terms": ["feeling nervous anxious or on edge"]},
+    {"n": 2, "item": "Not being able to stop or control worrying", "search_terms": ["not able to stop or control worrying"]},
+    {"n": 3, "item": "Worrying too much about different things", "search_terms": ["worrying too much about different things"]},
+    {"n": 4, "item": "Trouble relaxing", "search_terms": ["recent trouble relaxing"]},
+    {"n": 5, "item": "Being so restless that it is hard to sit still", "search_terms": ["recent restlessness hard to sit still"]},
+    {"n": 6, "item": "Becoming easily annoyed or irritable", "search_terms": ["easily annoyed or irritable"]},
+    {"n": 7, "item": "Feeling afraid as if something awful might happen", "search_terms": ["feelings of foreboding something awful might happen"]}
+  ],
+  "scoring": "Each item scored 0-3 over the last 2 weeks; total = sum of 7 items (range 0-21). Cutoffs: >=5 mild, >=10 moderate, >=15 severe. [VERIFY] cutoffs before clinical interpretation.",
+  "confidence": "high",
+  "note": "Definition is biobank-agnostic (items + scoring + source). The UKB field mapping per item is produced by the KG query step and stored in rules.json, NOT here — keep concept (definition) and mapping (UKB-specific) separate."
+}
