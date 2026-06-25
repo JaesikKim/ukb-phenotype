@@ -1,0 +1,302 @@
+{
+  "phenotype": "GAD-7",
+  "kg_version": "1782339456",
+  "source_concept": "validated_instrument (Spitzer 2006); 7 items harmonized to 0-3 then summed",
+  "variables": [
+    {
+      "name": "gad7_item1",
+      "description": "GAD-7 item 1: Feeling nervous, anxious, or on edge (0-3, last 2 weeks)",
+      "fields": [
+        {
+          "field_id": 20506,
+          "title": "Recent feelings or nervousness or anxiety",
+          "recode": {
+            "1": 0,
+            "2": 1,
+            "3": 2,
+            "4": 3
+          },
+          "missing_codes": [
+            -818
+          ],
+          "instance_agg": "max",
+          "role": "primary (MHQ, 1-4 -> 0-3)"
+        },
+        {
+          "field_id": 29058,
+          "title": "Recent feelings or nervousness or anxiety",
+          "missing_codes": [
+            -3
+          ],
+          "instance_agg": "max",
+          "role": "equivalent (online, 0-3)"
+        }
+      ],
+      "combine": "max",
+      "score": null,
+      "rationale": "Harmonize MHQ (enc 504, 1-4) and online (enc 168, 0-3) each to 0-3; take max across the equivalent items (highest available report)."
+    },
+    {
+      "name": "gad7_item2",
+      "description": "GAD-7 item 2: Not being able to stop or control worrying (0-3, last 2 weeks)",
+      "fields": [
+        {
+          "field_id": 20509,
+          "title": "Recent inability to stop or control worrying",
+          "recode": {
+            "1": 0,
+            "2": 1,
+            "3": 2,
+            "4": 3
+          },
+          "missing_codes": [
+            -818
+          ],
+          "instance_agg": "max",
+          "role": "primary (MHQ, 1-4 -> 0-3)"
+        },
+        {
+          "field_id": 29059,
+          "title": "Recent inability to stop or control worrying",
+          "missing_codes": [
+            -3
+          ],
+          "instance_agg": "max",
+          "role": "equivalent (online, 0-3)"
+        }
+      ],
+      "combine": "max",
+      "score": null,
+      "rationale": "Harmonize MHQ (enc 504, 1-4) and online (enc 168, 0-3) each to 0-3; take max across the equivalent items (highest available report)."
+    },
+    {
+      "name": "gad7_item3",
+      "description": "GAD-7 item 3: Worrying too much about different things (0-3, last 2 weeks)",
+      "fields": [
+        {
+          "field_id": 20520,
+          "title": "Recent worrying too much about different things",
+          "recode": {
+            "1": 0,
+            "2": 1,
+            "3": 2,
+            "4": 3
+          },
+          "missing_codes": [
+            -818
+          ],
+          "instance_agg": "max",
+          "role": "primary (MHQ, 1-4 -> 0-3)"
+        },
+        {
+          "field_id": 29060,
+          "title": "Recent worrying too much about different things",
+          "missing_codes": [
+            -3
+          ],
+          "instance_agg": "max",
+          "role": "equivalent (online, 0-3)"
+        }
+      ],
+      "combine": "max",
+      "score": null,
+      "rationale": "Harmonize MHQ (enc 504, 1-4) and online (enc 168, 0-3) each to 0-3; take max across the equivalent items (highest available report)."
+    },
+    {
+      "name": "gad7_item4",
+      "description": "GAD-7 item 4: Trouble relaxing (0-3, last 2 weeks)",
+      "fields": [
+        {
+          "field_id": 20515,
+          "title": "Recent trouble relaxing",
+          "recode": {
+            "1": 0,
+            "2": 1,
+            "3": 2,
+            "4": 3
+          },
+          "missing_codes": [
+            -818
+          ],
+          "instance_agg": "max",
+          "role": "primary (MHQ, 1-4 -> 0-3)"
+        },
+        {
+          "field_id": 29061,
+          "title": "Recent trouble relaxing",
+          "missing_codes": [
+            -3
+          ],
+          "instance_agg": "max",
+          "role": "equivalent (online, 0-3)"
+        }
+      ],
+      "combine": "max",
+      "score": null,
+      "rationale": "Harmonize MHQ (enc 504, 1-4) and online (enc 168, 0-3) each to 0-3; take max across the equivalent items (highest available report)."
+    },
+    {
+      "name": "gad7_item5",
+      "description": "GAD-7 item 5: Being so restless that it is hard to sit still (0-3, last 2 weeks)",
+      "fields": [
+        {
+          "field_id": 20516,
+          "title": "Recent restlessness",
+          "recode": {
+            "1": 0,
+            "2": 1,
+            "3": 2,
+            "4": 3
+          },
+          "missing_codes": [
+            -818
+          ],
+          "instance_agg": "max",
+          "role": "primary (MHQ, 1-4 -> 0-3)"
+        },
+        {
+          "field_id": 29062,
+          "title": "Recent restlessness",
+          "missing_codes": [
+            -3
+          ],
+          "instance_agg": "max",
+          "role": "equivalent (online, 0-3)"
+        }
+      ],
+      "combine": "max",
+      "score": null,
+      "rationale": "Harmonize MHQ (enc 504, 1-4) and online (enc 168, 0-3) each to 0-3; take max across the equivalent items (highest available report)."
+    },
+    {
+      "name": "gad7_item6",
+      "description": "GAD-7 item 6: Becoming easily annoyed or irritable (0-3, last 2 weeks)",
+      "fields": [
+        {
+          "field_id": 20505,
+          "title": "Recent easy annoyance or irritability",
+          "recode": {
+            "1": 0,
+            "2": 1,
+            "3": 2,
+            "4": 3
+          },
+          "missing_codes": [
+            -818
+          ],
+          "instance_agg": "max",
+          "role": "primary (MHQ, 1-4 -> 0-3)"
+        },
+        {
+          "field_id": 29063,
+          "title": "Recent easy annoyance or irritability",
+          "missing_codes": [
+            -3
+          ],
+          "instance_agg": "max",
+          "role": "equivalent (online, 0-3)"
+        }
+      ],
+      "combine": "max",
+      "score": null,
+      "rationale": "Harmonize MHQ (enc 504, 1-4) and online (enc 168, 0-3) each to 0-3; take max across the equivalent items (highest available report)."
+    },
+    {
+      "name": "gad7_item7",
+      "description": "GAD-7 item 7: Feeling afraid as if something awful might happen (0-3, last 2 weeks)",
+      "fields": [
+        {
+          "field_id": 20512,
+          "title": "Recent feelings of foreboding",
+          "recode": {
+            "1": 0,
+            "2": 1,
+            "3": 2,
+            "4": 3
+          },
+          "missing_codes": [
+            -818
+          ],
+          "instance_agg": "max",
+          "role": "primary (MHQ, 1-4 -> 0-3)"
+        },
+        {
+          "field_id": 29064,
+          "title": "Recent feelings of foreboding",
+          "missing_codes": [
+            -3
+          ],
+          "instance_agg": "max",
+          "role": "equivalent (online, 0-3)"
+        }
+      ],
+      "combine": "max",
+      "score": null,
+      "rationale": "Harmonize MHQ (enc 504, 1-4) and online (enc 168, 0-3) each to 0-3; take max across the equivalent items (highest available report)."
+    },
+    {
+      "name": "gad7_total",
+      "description": "GAD-7 total score (sum of the 7 items, range 0-21)",
+      "fields": [
+        {
+          "variable": "gad7_item1"
+        },
+        {
+          "variable": "gad7_item2"
+        },
+        {
+          "variable": "gad7_item3"
+        },
+        {
+          "variable": "gad7_item4"
+        },
+        {
+          "variable": "gad7_item5"
+        },
+        {
+          "variable": "gad7_item6"
+        },
+        {
+          "variable": "gad7_item7"
+        }
+      ],
+      "combine": "sum",
+      "score": null,
+      "rationale": "Sum of the seven 0-3 item scores. A missing item is skipped (min_count=1)."
+    },
+    {
+      "name": "gad7_moderate_or_worse",
+      "description": "GAD-7 >= 10 (moderate or worse anxiety)",
+      "fields": [
+        {
+          "variable": "gad7_total"
+        }
+      ],
+      "combine": "first_non_null",
+      "score": {
+        "op": ">=",
+        "threshold": 10,
+        "true": 1,
+        "false": 0
+      },
+      "rationale": "Standard GAD-7 cutoff: total >= 10 indicates clinically significant anxiety (Spitzer 2006)."
+    }
+  ],
+  "dropped": [
+    {
+      "field_id": 1970,
+      "title": "Nervous feelings",
+      "reason": "lifetime trait (touchscreen), not 2-week frequency; last-resort fallback only"
+    },
+    {
+      "field_id": 2070,
+      "title": "Frequency of tenseness / restlessness in last 2 weeks",
+      "reason": "related symptom, not the exact GAD-7 item; lower priority"
+    },
+    {
+      "field_id": 23045,
+      "title": "Very nervous mood over last week",
+      "reason": "different timeframe (last week) and scale; excluded for harmonization"
+    }
+  ]
+}

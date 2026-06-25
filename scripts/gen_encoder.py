@@ -83,9 +83,16 @@ def _score(v, sc):
     return out
 
 
-def encode_variable(df, spec, strict):
+def encode_variable(df, spec, strict, computed):
     parts = []
     for f in spec["fields"]:
+        if "variable" in f:  # reference an already-computed output variable (e.g. a sum of item scores)
+            ref = f["variable"]
+            if ref not in computed:
+                sys.exit(f"FAIL: {spec['name']} references variable {ref!r} before it is computed "
+                         f"(define it earlier in 'variables')")
+            parts.append(computed[ref])
+            continue
         fid = f["field_id"]
         cols = _cols(df, fid)
         if not cols:
@@ -121,8 +128,11 @@ def main():
     if a.id_col not in df.columns:
         sys.exit(f"FAIL: id column {a.id_col!r} not in extract; columns start with {list(df.columns)[:5]}")
     out = pd.DataFrame({a.id_col: df[a.id_col]})
+    computed = {}
     for spec in RULES["variables"]:
-        out[spec["name"]] = encode_variable(df, spec, strict=not a.lenient).values
+        s = encode_variable(df, spec, strict=not a.lenient, computed=computed)
+        out[spec["name"]] = s.values
+        computed[spec["name"]] = s
     out.to_csv(a.out, index=False)
     sys.stderr.write(f"OK  wrote {a.out}  rows={len(out)}  "
                      f"variables={[s['name'] for s in RULES['variables']]}\n")
@@ -139,8 +149,10 @@ def validate(rules):
         if not v.get("fields"):
             sys.exit(f"FAIL: variable {name!r} has no 'fields'")
         for f in v["fields"]:
+            if "variable" in f:  # reference to another output variable; checked at runtime by ordering
+                continue
             if "field_id" not in f:
-                sys.exit(f"FAIL: a field in {name!r} is missing 'field_id'")
+                sys.exit(f"FAIL: a field in {name!r} is missing 'field_id' (or 'variable')")
             ia = f.get("instance_agg", "mean")
             if ia not in VALID_AGG:
                 sys.exit(f"FAIL: {name}.{f['field_id']} bad instance_agg {ia!r} (use {sorted(VALID_AGG)})")

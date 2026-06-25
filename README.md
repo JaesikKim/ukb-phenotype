@@ -82,7 +82,9 @@ python3 encode.py <extract.csv> -o phenotype.csv          # apply it (fail-loud 
 `rules.json` is the structured encoding plan (per variable: source fields with `missing_codes`→NaN,
 `recode`, `instance_agg`; plus `combine` and optional `score`). `encode.py` handles UKB column naming
 (`{field}-{instance}.{array}` / RAP `p{field}_i_a`), special-code handling, instance/array aggregation,
-and **fails loud** if a referenced field is missing. See `examples/fruit_intake/` for a full set.
+and **fails loud** if a referenced field is missing. A field entry may also be `{"variable": "<name>"}`
+to reuse an earlier output variable (composite scores). Worked examples: `examples/fruit_intake/`
+(Tier-B exposure) and `examples/gad-7/` (Tier-C instrument: 7 items → total → `>= 10` screen).
 
 ## Audit (HTML report)
 ```bash

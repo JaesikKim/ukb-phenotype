@@ -119,6 +119,9 @@ Field knobs: `missing_codes` (→ NaN), `recode` (raw value → value, for bound
 levels), `instance_agg` ∈ `mean|max|min|sum|first_non_null` (reduce a field's instance/array columns).
 Variable knobs: `combine` ∈ `sum|max|min|mean|priority|first_non_null` (merge the fields), and `score`
 = `null` or `{"op": ">=|<=|>|<|==|in", "threshold": <n> | "values": [...], "true": 1, "false": 0}`.
+For composite scores (e.g. a GAD-7 total = sum of item scores), a field entry may be
+`{"variable": "<earlier-variable-name>"}` instead of a `field_id` — it reuses an already-computed
+output variable. See `examples/gad-7/` (7 items → `gad7_total` → `gad7_moderate_or_worse`).
 `dropped` is optional — only judgment-call rejections need a reason; the render derives the rest.
 
 ## 6. Compile + run

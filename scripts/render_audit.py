@@ -243,12 +243,18 @@ def rules_html(r):
         flds = v.get("fields", [])
         combine = v.get("combine", "first_non_null")
         sc = v.get("score")
-        terms = ", ".join(f'{f.get("field_id")}[{f.get("instance_agg", "mean")}]' for f in flds)
+        terms = ", ".join(f["variable"] if "variable" in f
+                          else f'{f.get("field_id")}[{f.get("instance_agg", "mean")}]' for f in flds)
         formula = f"{combine}( {terms} )"
         if sc:
             formula += f"  →  {_score_str(sc)}"
         frows = ""
         for f in flds:
+            if "variable" in f:
+                frows += (f'<tr><td class=mono>{esc(f["variable"])}</td>'
+                          f'<td class=muted>(computed variable)</td><td>reference</td>'
+                          f'<td class=mono>—</td><td class=mono>—</td><td class=mono>—</td></tr>')
+                continue
             mc = f.get("missing_codes") or []
             rec = f.get("recode") or {}
             frows += (f'<tr><td class=mono>{esc(f.get("field_id"))}</td>'

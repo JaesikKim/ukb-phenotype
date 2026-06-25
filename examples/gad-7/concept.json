@@ -1,0 +1,71 @@
+{
+  "query": "anxiety screening (GAD-7)",
+  "phenotype": "GAD-7",
+  "tier": "validated_instrument",
+  "kg_version": "1782339456",
+  "web_searched": false,
+  "instrument_cache": "data/instruments/gad-7.json",
+  "sources": [
+    {
+      "title": "Spitzer RL, Kroenke K, Williams JBW, Löwe B. A brief measure for assessing generalized anxiety disorder: the GAD-7. Arch Intern Med. 2006;166(10):1092-1097.",
+      "url": "https://doi.org/10.1001/archinte.166.10.1092",
+      "note": "[VERIFY] canonical source; re-confirm items and cutoffs via web before relying on them"
+    }
+  ],
+  "items": [
+    {
+      "item": "Feeling nervous, anxious, or on edge",
+      "encoding_logic": "0-3 frequency over last 2 weeks",
+      "search_terms": [
+        "feeling nervous anxious or on edge"
+      ]
+    },
+    {
+      "item": "Not being able to stop or control worrying",
+      "encoding_logic": "0-3 frequency over last 2 weeks",
+      "search_terms": [
+        "not able to stop or control worrying"
+      ]
+    },
+    {
+      "item": "Worrying too much about different things",
+      "encoding_logic": "0-3 frequency over last 2 weeks",
+      "search_terms": [
+        "worrying too much about different things"
+      ]
+    },
+    {
+      "item": "Trouble relaxing",
+      "encoding_logic": "0-3 frequency over last 2 weeks",
+      "search_terms": [
+        "recent trouble relaxing"
+      ]
+    },
+    {
+      "item": "Being so restless that it is hard to sit still",
+      "encoding_logic": "0-3 frequency over last 2 weeks",
+      "search_terms": [
+        "recent restlessness hard to sit still"
+      ]
+    },
+    {
+      "item": "Becoming easily annoyed or irritable",
+      "encoding_logic": "0-3 frequency over last 2 weeks",
+      "search_terms": [
+        "easily annoyed or irritable"
+      ]
+    },
+    {
+      "item": "Feeling afraid as if something awful might happen",
+      "encoding_logic": "0-3 frequency over last 2 weeks",
+      "search_terms": [
+        "feelings of foreboding something awful might happen"
+      ]
+    }
+  ],
+  "scoring": "Each item scored 0-3 over the last 2 weeks; total = sum of 7 items (range 0-21). Cutoffs: >=5 mild, >=10 moderate, >=15 severe. [VERIFY] cutoffs before clinical interpretation. total = sum of 7 items (0-21); >=10 = moderate or worse.",
+  "confidence": "high",
+  "verify_flags": [
+    "[VERIFY] cutoffs 5/10/15 before clinical interpretation"
+  ]
+}
